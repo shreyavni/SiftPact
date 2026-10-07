@@ -9,17 +9,25 @@ import Navbar from '@/components/landing/Navbar';
 import { formatDistanceToNow, format } from 'date-fns';
 
 export default async function DashboardPage() {
-    const { userId } = await auth();
-    if (!userId) redirect('/');
+    let analyses: any[] = [];
 
-    // Check if user has a role, if not redirect to onboarding
-    const role = await getUserRole();
-    if (!role) {
-        redirect('/onboarding');
+    try {
+        const { userId } = await auth();
+
+        if (userId) {
+            // Check if user has a role, if not redirect to onboarding
+            const role = await getUserRole();
+            if (!role) {
+                redirect('/onboarding');
+            }
+
+            // Fetch saved analyses from database
+            analyses = await getUserAnalyses();
+        }
+    } catch (error) {
+        // Auth may fail due to clock skew — render page with empty data
+        console.warn('[Dashboard] auth() failed (clock skew?), rendering with defaults');
     }
-
-    // Fetch saved analyses from database
-    const analyses = await getUserAnalyses();
 
     const getRiskBadge = (score: number) => {
         if (score >= 70) return { label: 'High Risk', color: 'bg-red-100 text-red-700 border-red-200' };

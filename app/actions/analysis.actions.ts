@@ -1,10 +1,17 @@
 'use server';
 
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-const prisma = new PrismaClient();
+// Lazy-initialise Prisma so the import itself never crashes
+function getPrisma() {
+    try {
+        const { PrismaClient } = require("@prisma/client");
+        return new PrismaClient();
+    } catch {
+        return null;
+    }
+}
 
 interface SaveAnalysisInput {
     documentName: string;
@@ -19,6 +26,12 @@ export async function saveAnalysis(data: SaveAnalysisInput) {
 
     if (!userId) {
         return { success: false, error: 'Not authenticated' };
+    }
+
+    const prisma = getPrisma();
+    if (!prisma) {
+        console.warn('[saveAnalysis] DATABASE_URL not configured – skipping save');
+        return { success: false, error: 'Database not configured. Analysis was not saved.' };
     }
 
     try {
@@ -56,6 +69,12 @@ export async function getUserAnalyses() {
         return [];
     }
 
+    const prisma = getPrisma();
+    if (!prisma) {
+        console.warn('[getUserAnalyses] DATABASE_URL not configured – returning empty list');
+        return [];
+    }
+
     try {
         const analyses = await prisma.savedAnalysis.findMany({
             where: { userId },
@@ -83,6 +102,11 @@ export async function getAnalysisById(id: string) {
         return null;
     }
 
+    const prisma = getPrisma();
+    if (!prisma) {
+        return null;
+    }
+
     try {
         const analysis = await prisma.savedAnalysis.findFirst({
             where: { id, userId }
@@ -102,6 +126,11 @@ export async function deleteAnalysis(id: string) {
         return { success: false, error: 'Not authenticated' };
     }
 
+    const prisma = getPrisma();
+    if (!prisma) {
+        return { success: false, error: 'Database not configured' };
+    }
+
     try {
         await prisma.savedAnalysis.delete({
             where: { id, userId }
@@ -114,3 +143,4 @@ export async function deleteAnalysis(id: string) {
         return { success: false, error: error.message };
     }
 }
+

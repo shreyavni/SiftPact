@@ -8,10 +8,10 @@ export async function POST(request: NextRequest) {
 
         if (action === 'enhance' && existingContent && clauseText) {
             // Enhance existing contract with a clause
-            const enhanced = await enhanceContract(existingContent, clauseText);
+            const result = await enhanceContract(existingContent, clauseText);
             return NextResponse.json({
                 success: true,
-                content: enhanced
+                content: result.content
             });
         }
 

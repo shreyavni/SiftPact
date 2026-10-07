@@ -1,4 +1,4 @@
-import { generateContractDraft as generateDraft, enhanceContract as enhance } from '@/lib/services/contractGenerator.service';
+// Contract Generator Service - stub implementation
 
 /**
  * Stub implementation for contract generation.
