@@ -56,6 +56,7 @@ export default function ResultPage() {
     const [isSaving, setIsSaving] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
+    const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
     useEffect(() => {
         try {
@@ -224,7 +225,9 @@ export default function ResultPage() {
                             variant="outline"
                             size="sm"
                             className="gap-2"
+                            disabled={isDownloadingPdf}
                             onClick={async () => {
+                                setIsDownloadingPdf(true);
                                 try {
                                     const response = await fetch('/api/generate-pdf', {
                                         method: 'POST',
@@ -243,14 +246,24 @@ export default function ResultPage() {
                                         a.download = `contract-analysis-${Date.now()}.pdf`;
                                         a.click();
                                         URL.revokeObjectURL(url);
+                                    } else {
+                                        console.warn('Server PDF generation failed, falling back to browser print dialog.');
+                                        window.print();
                                     }
                                 } catch (err) {
-                                    console.error('PDF download failed:', err);
+                                    console.error('PDF download error, falling back to print:', err);
+                                    window.print();
+                                } finally {
+                                    setIsDownloadingPdf(false);
                                 }
                             }}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
-                            Download PDF
+                            {isDownloadingPdf ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                            )}
+                            {isDownloadingPdf ? 'Generating PDF...' : 'Download PDF'}
                         </Button>
                         <EmailDialog results={results} />
                         <Button size="sm" onClick={handleNewAnalysis}>

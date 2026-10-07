@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import puppeteer from 'puppeteer';
+import { launchPuppeteerBrowser } from '@/lib/services/browser.service';
 
 // Generate HTML content for the PDF report
 function generateReportHtml(results: any): string {
@@ -83,10 +83,7 @@ function generateReportHtml(results: any): string {
 async function generatePdfBuffer(analysisData: any): Promise<Buffer> {
     console.log('[PDF] 📄 Generating PDF for email attachment...');
 
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
-    });
+    const browser = await launchPuppeteerBrowser();
 
     const page = await browser.newPage();
     await page.setViewport({ width: 800, height: 1200, deviceScaleFactor: 2 });
@@ -163,7 +160,11 @@ export async function POST(request: NextRequest) {
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
             console.log('--- EMAIL MOCK MODE ---');
             console.log({ recipient: email, attachPdf, status: 'Simulated' });
-            return NextResponse.json({ success: true, message: 'Mock email sent' });
+            return NextResponse.json({
+                success: true,
+                isMock: true,
+                message: 'Demo mode: Email simulated. Configure EMAIL_USER and EMAIL_PASS in .env to send real emails via Gmail SMTP.'
+            });
         }
 
         const mailOptions: any = {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import { launchPuppeteerBrowser } from '@/lib/services/browser.service';
 
 // Generate HTML content for the report with color-coded contract text
 function generateReportHtml(results: any): string {
@@ -308,17 +308,8 @@ export async function POST(request: NextRequest) {
 
         console.log('[PDF] 🌐 Launching browser...');
 
-        // Launch Puppeteer
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--font-render-hinting=none'
-            ]
-        });
+        // Launch Puppeteer via system browser or available channel
+        const browser = await launchPuppeteerBrowser();
 
         const page = await browser.newPage();
 

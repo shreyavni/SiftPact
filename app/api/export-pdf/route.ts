@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import { launchPuppeteerBrowser } from '@/lib/services/browser.service';
 
 // PDF Template HTML wrapper
 function generatePDFHTML(content: string, options: {
@@ -233,11 +233,8 @@ export async function POST(request: NextRequest) {
             companyName
         });
 
-        // Launch Puppeteer and generate PDF
-        const browser = await puppeteer.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
+        // Launch Puppeteer via system browser or available channel
+        const browser = await launchPuppeteerBrowser();
 
         const page = await browser.newPage();
         await page.setContent(html, { waitUntil: 'networkidle0' });

@@ -30,6 +30,17 @@ export default function Home() {
         body: formData
       });
 
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        if (response.status === 401 || response.status === 403) {
+          throw new Error('Authentication required. Please sign in to continue.');
+        }
+        if (response.status === 413) {
+          throw new Error('The uploaded file is too large. Please upload a file under 10MB.');
+        }
+        throw new Error(`Server returned unexpected response (${response.status}). Please try again.`);
+      }
+
       const data = await response.json();
 
       if (!data.success) {
