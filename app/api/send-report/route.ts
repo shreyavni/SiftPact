@@ -60,7 +60,7 @@ function generateReportHtml(results: any): string {
     <div class="print-report" style="max-width: 800px; margin: 0 auto; padding: 40px; background-color: #ffffff; color: #1F2937;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 2px solid #E5E7EB;">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 40px; height: 40px; border-radius: 8px; background-color: #1F2937; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 18px;">अ</div>
+                <div style="width: 40px; height: 40px; border-radius: 8px; background-color: #1F2937; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 18px;">स</div>
                 <div>
                     <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Contract Analysis Report</h1>
                     <p style="margin: 4px 0 0 0; color: #6B7280; font-size: 14px;">SiftPact Legal AI</p>

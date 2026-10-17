@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
+import type { ReactElement } from 'react';
 import { Badge } from '@/components/ui/Badge';
 
 interface RiskyClause {
@@ -45,7 +46,7 @@ export default function ContractViewer({ contractText, riskyClauses, onClauseCli
         }
 
         let lastIndex = 0;
-        const parts: JSX.Element[] = [];
+        const parts: ReactElement[] = [];
         const sortedClauses = [...riskyClauses]
             .filter(c => c.startIndex >= 0 && c.endIndex > c.startIndex)
             .sort((a, b) => a.startIndex - b.startIndex);

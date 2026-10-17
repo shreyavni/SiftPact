@@ -101,7 +101,7 @@ export default function DeviationHighlighter({ deviations }: Props) {
                                 <p className="text-xs text-amber-700 uppercase tracking-wide mb-1 font-medium flex items-center gap-1">
                                     📄 Actual Clause from Your Contract
                                 </p>
-                                <p className="text-amber-900 text-sm italic">"{deviation.matchedText}"</p>
+                                <p className="text-amber-900 text-sm italic">&quot;{deviation.matchedText}&quot;</p>
                             </div>
                         )}
 
@@ -138,7 +138,7 @@ export default function DeviationHighlighter({ deviations }: Props) {
 
             <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded">
                 <p className="text-sm text-blue-800">
-                    💡 <strong>Tip:</strong> These deviations don't necessarily violate Indian law, but they are
+                    💡 <strong>Tip:</strong>                     These deviations don&apos;t necessarily violate Indian law, but they are
                     significantly less favorable to you than standard industry practices. Consider negotiating these terms.
                 </p>
             </div>

@@ -125,7 +125,7 @@ function ReportContent() {
                 fontSize: "18px",
               }}
             >
-              अ
+              स
             </div>
             <div>
               <h1 style={{ margin: 0, fontSize: "24px", fontWeight: "bold" }}>
@@ -387,8 +387,8 @@ function ReportContent() {
                 lineHeight: 1.5,
               }}
             >
-              "{clause.originalText?.substring(0, 300)}
-              {clause.originalText?.length > 300 ? "..." : ""}"
+              &quot;{clause.originalText?.substring(0, 300)}
+              {clause.originalText?.length > 300 ? "..." : ""}&quot;
             </div>
 
             {/* Explanation - Freelancer View */}

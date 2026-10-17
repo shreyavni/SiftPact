@@ -148,7 +148,7 @@ export default function ViolationCard({ violation, onJumpToClause, isHighlighted
                         <div>
                             <p className="text-xs text-neutral-500 uppercase tracking-wide mb-1">Original Clause</p>
                             <p className="text-sm text-neutral-600 italic bg-white p-3 rounded border">
-                                "{violation.originalText}"
+                                &quot;{violation.originalText}&quot;
                             </p>
                         </div>
                         <a

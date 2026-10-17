@@ -152,7 +152,7 @@ export default async function DashboardPage() {
                                             <td className="px-6 py-4">
                                                 <div className="flex flex-wrap gap-1">
                                                     {analysis.tags.length > 0 ? (
-                                                        analysis.tags.slice(0, 3).map(tag => (
+                                                        analysis.tags.slice(0, 3).map((tag: string) => (
                                                             <span
                                                                 key={tag}
                                                                 className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium"

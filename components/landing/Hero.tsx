@@ -41,7 +41,7 @@ export default function Hero({ onUpload, error, setError }: HeroProps) {
 
                     {/* 3. Subheading */}
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mb-10 mx-auto">
-                        Don't let complex legal jargon trap you. Upload your contract and get an instant, easy-to-understand analysis based on Indian Law.
+                        Don&apos;t let complex legal jargon trap you. Upload your contract and get an instant, easy-to-understand analysis based on Indian Law.
                     </p>
 
                     {/* 4. Upload Card - Centered */}

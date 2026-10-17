@@ -159,7 +159,7 @@ export default function ResultPage() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center">
-                <span className="text-white font-bold text-xs">अ</span>
+                <span className="text-white font-bold text-xs">स</span>
               </div>
               <Separator orientation="vertical" className="h-6 mx-2" />
               <div>

@@ -134,7 +134,7 @@ export default function EmailDialog({ results }: Props) {
           {/* Email Input */}
           <div className="grid gap-2">
             <label htmlFor="email" className="text-sm font-medium">
-              Lawyer / Colleague's Email Address
+              Lawyer / Colleague&apos;s Email Address
             </label>
             <input
               id="email"
