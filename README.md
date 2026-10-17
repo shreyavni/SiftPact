@@ -35,7 +35,7 @@ The platform focuses on Indian legal context, not US-style contract assumptions,
 - Frontend: Next.js 15, React 19, TypeScript
 - Styling: Tailwind CSS
 - Authentication: Clerk
-- Database: SQLite for metadata and legal knowledge, Prisma optional for user data
+- Database: SQLite for legal-knowledge data; PostgreSQL (Neon) via Prisma for user profiles and saved analyses
 - Vector store: ChromaDB
 - AI / inference: Hugging Face Inference API (with token fallback)
 - OCR: Tesseract.js
@@ -130,7 +130,8 @@ CLERK_SECRET_KEY=your_clerk_secret_key
 
 # Database
 DATABASE_PATH=./data/legal_knowledge.db
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://USER:PASSWORD@YOUR-NEON-POOLER-HOST/DB?sslmode=require"
+DIRECT_URL="postgresql://USER:PASSWORD@YOUR-NEON-HOST/DB?sslmode=require"
 
 # ChromaDB
 CHROMA_API_KEY=your_chroma_key
@@ -157,10 +158,18 @@ npm install
 ## Initialization
 
 ```bash
+npm run db:generate
+npm run db:push
 npm run seed
 npm run generate-embeddings
 npm run dev
 ```
+
+`DATABASE_URL` should use Neon’s pooled connection string for app traffic, and
+`DIRECT_URL` should use the direct (unpooled) connection string for Prisma schema
+changes. `db:push` creates or updates the PostgreSQL tables described in
+`prisma/schema.prisma`; it does not seed existing app records. Restart the dev
+server after changing `.env`.
 
 Then open:
 
@@ -177,6 +186,8 @@ npm run seed:enhanced
 npm run generate-embeddings
 npm run check-db
 npm run lint
+npm run db:generate
+npm run db:push
 ```
 
 ## Important Notes About the Legal Analysis

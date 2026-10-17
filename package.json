@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
     "seed": "tsx lib/db/seed.ts",
     "seed:enhanced": "tsx lib/db/seed.enhanced.ts",
     "generate-embeddings": "tsx scripts/generateEmbeddings.ts",
