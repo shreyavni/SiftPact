@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/Badge';
 import { FileText, PenLine } from 'lucide-react';
 import ContractUploader from '@/components/upload/ContractUploader';
 import { SignedIn, SignedOut, SignUpButton } from "@clerk/nextjs";
