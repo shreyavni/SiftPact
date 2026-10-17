@@ -63,7 +63,7 @@ function generateReportHtml(results: any): string {
                 <div style="width: 40px; height: 40px; border-radius: 8px; background-color: #1F2937; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 18px;">अ</div>
                 <div>
                     <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Contract Analysis Report</h1>
-                    <p style="margin: 4px 0 0 0; color: #6B7280; font-size: 14px;">SiftPactgal AI</p>
+                    <p style="margin: 4px 0 0 0; color: #6B7280; font-size: 14px;">SiftPact Legal AI</p>
                 </div>
             </div>
             <p style="margin: 0; font-size: 14px; color: #6B7280;">${new Date().toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</p>
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
     const htmlContent = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
                 <div style="background-color: #1a1a1a; padding: 20px; text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0;">SiftPactalysis</h1>
+                    <h1 style="color: #ffffff; margin: 0;">SiftPact Analysis</h1>
                 </div>
                 <div style="padding: 20px; border: 1px solid #e5e7eb;">
                     <p>Hello,</p>
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
         const pdfBuffer = await generatePdfBuffer(results);
         mailOptions.attachments = [
           {
-            filename: `SiftPactport.pdf`,
+            filename: `SiftPact_Report.pdf`,
             content: pdfBuffer,
             contentType: "application/pdf",
           },
