@@ -10,7 +10,7 @@ export default function Footer() {
                             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-heading font-bold text-sm">
                                 अ
                             </div>
-                            <span className="font-heading font-bold text-xl text-foreground">Andhakanoon</span>
+                            <span className="font-heading font-bold text-xl text-foreground">SiftPactpan>
                         </Link>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                             Empowering Indians with instant, accessible, and accurate legal contract analysis.
@@ -46,7 +46,7 @@ export default function Footer() {
 
                 <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-xs text-muted-foreground">
-                        © 2026 Andhakanoon. All rights reserved.
+                        © 2026 SiftPactll rights reserved.
                     </p>
                     <p className="text-xs text-muted-foreground text-center md:text-right">
                         Educational tool only. Not a substitute for professional legal advice.

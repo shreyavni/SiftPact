@@ -1,57 +1,62 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-import Navbar from '@/components/landing/Navbar';
-import Hero from '@/components/landing/Hero';
-import Features from '@/components/landing/Features';
-import Footer from '@/components/landing/Footer';
-import { Loader2 } from 'lucide-react';
+import Navbar from "@/components/landing/Navbar";
+import Hero from "@/components/landing/Hero";
+import Features from "@/components/landing/Features";
+import Footer from "@/components/landing/Footer";
+import { Loader2 } from "lucide-react";
 
-const STORAGE_KEY = 'andhakanoon_analysis_result';
+const STORAGE_KEY = "SiftPact_analysis_result";
 
 export default function Home() {
   const router = useRouter();
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileUpload = async (file: File, language: 'en' | 'hi') => {
+  const handleFileUpload = async (file: File, language: "en" | "hi") => {
     setAnalyzing(true);
     setError(null);
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('language', language);
+      formData.append("file", file);
+      formData.append("language", language);
 
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        body: formData
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        body: formData,
       });
 
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
         if (response.status === 401 || response.status === 403) {
-          throw new Error('Authentication required. Please sign in to continue.');
+          throw new Error(
+            "Authentication required. Please sign in to continue.",
+          );
         }
         if (response.status === 413) {
-          throw new Error('The uploaded file is too large. Please upload a file under 10MB.');
+          throw new Error(
+            "The uploaded file is too large. Please upload a file under 10MB.",
+          );
         }
-        throw new Error(`Server returned unexpected response (${response.status}). Please try again.`);
+        throw new Error(
+          `Server returned unexpected response (${response.status}). Please try again.`,
+        );
       }
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Analysis failed');
+        throw new Error(data.error || "Analysis failed");
       }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      router.push('/result');
-
+      router.push("/result");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      setError(err instanceof Error ? err.message : "Analysis failed");
       setAnalyzing(false);
     }
   };
@@ -75,10 +80,16 @@ export default function Home() {
           </div>
 
           <div className="space-y-3">
-            <h2 className="text-3xl font-heading font-bold text-foreground">Analyzing Contracts</h2>
+            <h2 className="text-3xl font-heading font-bold text-foreground">
+              Analyzing Contracts
+            </h2>
             <div className="flex flex-col gap-1 items-center">
-              <p className="text-muted-foreground animate-pulse">Running legal checks...</p>
-              <p className="text-xs text-muted-foreground/60">This may take up to a minute</p>
+              <p className="text-muted-foreground animate-pulse">
+                Running legal checks...
+              </p>
+              <p className="text-xs text-muted-foreground/60">
+                This may take up to a minute
+              </p>
             </div>
           </div>
 
@@ -94,11 +105,7 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-secondary/30">
       <Navbar />
       <main>
-        <Hero
-          onUpload={handleFileUpload}
-          error={error}
-          setError={setError}
-        />
+        <Hero onUpload={handleFileUpload} error={error} setError={setError} />
         <Features />
       </main>
       <Footer />

@@ -31,7 +31,7 @@ export default function OnboardingPage() {
                         Welcome, {user?.firstName || 'there'}! 👋
                     </h1>
                     <p className="text-lg text-gray-600">
-                        To personalize your experience, please tell us how you plan to use Andha Kanoon.
+                        To personalize your experience, please tell us how you plan to use SiftPact.
                     </p>
                 </div>
 

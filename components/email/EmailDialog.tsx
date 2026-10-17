@@ -1,200 +1,228 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import { Mail, CheckCircle, Loader2, FileText, ExternalLink, Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Mail,
+  CheckCircle,
+  Loader2,
+  FileText,
+  ExternalLink,
+  Info,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Props {
-    results: any;
+  results: any;
 }
 
 export default function EmailDialog({ results }: Props) {
-    const [email, setEmail] = useState('');
-    const [attachPdf, setAttachPdf] = useState(true);
-    const [sending, setSending] = useState(false);
-    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
-    const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
-    const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [attachPdf, setAttachPdf] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
-    const handleSend = async () => {
-        if (!email || !email.includes('@')) return;
+  const handleSend = async () => {
+    if (!email || !email.includes("@")) return;
 
-        setSending(true);
-        setStatus('idle');
-        setFeedbackMessage(null);
+    setSending(true);
+    setStatus("idle");
+    setFeedbackMessage(null);
 
-        try {
-            const response = await fetch('/api/send-report', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email,
-                    results,
-                    attachPdf,
-                    baseUrl: window.location.origin
-                })
-            });
+    try {
+      const response = await fetch("/api/send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          results,
+          attachPdf,
+          baseUrl: window.location.origin,
+        }),
+      });
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (response.ok && data.success) {
-                setStatus('success');
-                if (data.isMock) {
-                    setFeedbackMessage(
-                        'Demo Mode: Email simulated in server logs. (Set EMAIL_USER & EMAIL_PASS in .env to enable real Gmail SMTP sending).'
-                    );
-                } else {
-                    setFeedbackMessage('Report emailed successfully!');
-                }
-            } else {
-                setStatus('error');
-                setFeedbackMessage(data.error || 'Failed to send email. Please check server configuration.');
-            }
-        } catch (error: any) {
-            setStatus('error');
-            setFeedbackMessage(error?.message || 'Network error occurred while sending report.');
-        } finally {
-            setSending(false);
+      if (response.ok && data.success) {
+        setStatus("success");
+        if (data.isMock) {
+          setFeedbackMessage(
+            "Demo Mode: Email simulated in server logs. (Set EMAIL_USER & EMAIL_PASS in .env to enable real Gmail SMTP sending).",
+          );
+        } else {
+          setFeedbackMessage("Report emailed successfully!");
         }
-    };
-
-    const handleOpenMailClient = () => {
-        const docName = results?.document?.fileName || 'Contract';
-        const score = results?.analysis?.overallRiskScore ?? 0;
-        const level = results?.analysis?.riskLevel ?? 'UNKNOWN';
-
-        const topClauses = (results?.riskyClauses || [])
-            .slice(0, 4)
-            .map((c: any, i: number) => {
-                const explanation = c.explanation?.freelancer?.simple || c.explanation?.company?.simple || c.violationType || '';
-                return `${i + 1}. Clause #${c.clauseNumber || i + 1} (${c.riskLevel} Risk):\n   "${(c.originalText || '').substring(0, 150)}..."\n   Issue: ${explanation}`;
-            })
-            .join('\n\n');
-
-        const subject = encodeURIComponent(`Legal Contract Risk Analysis: ${docName}`);
-        const body = encodeURIComponent(
-            `Hi,\n\nI ran an AI legal analysis on our agreement (${docName}). Below is the summary:\n\n` +
-            `• Document: ${docName}\n` +
-            `• Overall Risk Score: ${score}/100 (${level} RISK)\n` +
-            `• Flagged Risky Clauses: ${results?.riskyClauses?.length || 0}\n\n` +
-            `KEY CONCERNS TO REVIEW:\n\n${topClauses}\n\n` +
-            `Full color-coded analysis generated by AndhaKanoon Legal AI.`
+      } else {
+        setStatus("error");
+        setFeedbackMessage(
+          data.error ||
+            "Failed to send email. Please check server configuration.",
         );
+      }
+    } catch (error: any) {
+      setStatus("error");
+      setFeedbackMessage(
+        error?.message || "Network error occurred while sending report.",
+      );
+    } finally {
+      setSending(false);
+    }
+  };
 
-        const mailtoUrl = `mailto:${encodeURIComponent(email || '')}?subject=${subject}&body=${body}`;
-        window.open(mailtoUrl, '_blank');
-    };
+  const handleOpenMailClient = () => {
+    const docName = results?.document?.fileName || "Contract";
+    const score = results?.analysis?.overallRiskScore ?? 0;
+    const level = results?.analysis?.riskLevel ?? "UNKNOWN";
 
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                    <Mail className="w-4 h-4" />
-                    Share with Lawyer
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                    <DialogTitle>Share Legal Analysis</DialogTitle>
-                    <DialogDescription>
-                        Send a detailed report of the risky clauses to your lawyer or colleague.
-                    </DialogDescription>
-                </DialogHeader>
+    const topClauses = (results?.riskyClauses || [])
+      .slice(0, 4)
+      .map((c: any, i: number) => {
+        const explanation =
+          c.explanation?.freelancer?.simple ||
+          c.explanation?.company?.simple ||
+          c.violationType ||
+          "";
+        return `${i + 1}. Clause #${c.clauseNumber || i + 1} (${c.riskLevel} Risk):\n   "${(c.originalText || "").substring(0, 150)}..."\n   Issue: ${explanation}`;
+      })
+      .join("\n\n");
 
-                <div className="space-y-4 py-4">
-                    {/* Email Input */}
-                    <div className="grid gap-2">
-                        <label htmlFor="email" className="text-sm font-medium">
-                            Lawyer / Colleague's Email Address
-                        </label>
-                        <input
-                            id="email"
-                            placeholder="lawyer@example.com"
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-
-                    {/* PDF Attachment Checkbox */}
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border">
-                        <input
-                            type="checkbox"
-                            id="attachPdf"
-                            checked={attachPdf}
-                            onChange={(e) => setAttachPdf(e.target.checked)}
-                            className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                        />
-                        <label htmlFor="attachPdf" className="flex items-center gap-2 cursor-pointer flex-1">
-                            <FileText className="w-4 h-4 text-muted-foreground" />
-                            <div>
-                                <span className="text-sm font-medium">Attach PDF Report</span>
-                                <p className="text-xs text-muted-foreground">Include full analysis as PDF attachment</p>
-                            </div>
-                        </label>
-                    </div>
-
-                    {/* Feedback / status banner */}
-                    {feedbackMessage && (
-                        <div className={cn(
-                            "p-3 rounded-lg text-xs leading-relaxed flex items-start gap-2",
-                            status === 'success' ? "bg-amber-50 border border-amber-200 text-amber-900" : "bg-red-50 border border-red-200 text-red-900"
-                        )}>
-                            <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
-                            <span>{feedbackMessage}</span>
-                        </div>
-                    )}
-                </div>
-
-                <DialogFooter className="flex flex-col sm:flex-col gap-2">
-                    <Button
-                        type="button"
-                        onClick={handleSend}
-                        disabled={!email || sending}
-                        className={cn(
-                            "w-full",
-                            status === 'success' && "bg-green-600 hover:bg-green-700"
-                        )}
-                    >
-                        {sending ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Sending Email...
-                            </>
-                        ) : status === 'success' ? (
-                            <>
-                                <CheckCircle className="mr-2 h-4 w-4" />
-                                Email Processed
-                            </>
-                        ) : (
-                            <>
-                                <Mail className="mr-2 h-4 w-4" />
-                                Send Automated Email
-                            </>
-                        )}
-                    </Button>
-
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={handleOpenMailClient}
-                        className="w-full gap-2 text-xs"
-                    >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        Open Pre-filled in Your Mail App (Gmail / Outlook)
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+    const subject = encodeURIComponent(
+      `Legal Contract Risk Analysis: ${docName}`,
     );
+    const body = encodeURIComponent(
+      `Hi,\n\nI ran an AI legal analysis on our agreement (${docName}). Below is the summary:\n\n` +
+        `• Document: ${docName}\n` +
+        `• Overall Risk Score: ${score}/100 (${level} RISK)\n` +
+        `• Flagged Risky Clauses: ${results?.riskyClauses?.length || 0}\n\n` +
+        `KEY CONCERNS TO REVIEW:\n\n${topClauses}\n\n` +
+        `Full color-coded analysis generated by SiftPactgal AI.`,
+    );
+
+    const mailtoUrl = `mailto:${encodeURIComponent(email || "")}?subject=${subject}&body=${body}`;
+    window.open(mailtoUrl, "_blank");
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Mail className="w-4 h-4" />
+          Share with Lawyer
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Share Legal Analysis</DialogTitle>
+          <DialogDescription>
+            Send a detailed report of the risky clauses to your lawyer or
+            colleague.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          {/* Email Input */}
+          <div className="grid gap-2">
+            <label htmlFor="email" className="text-sm font-medium">
+              Lawyer / Colleague's Email Address
+            </label>
+            <input
+              id="email"
+              placeholder="lawyer@example.com"
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          {/* PDF Attachment Checkbox */}
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border">
+            <input
+              type="checkbox"
+              id="attachPdf"
+              checked={attachPdf}
+              onChange={(e) => setAttachPdf(e.target.checked)}
+              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+            />
+            <label
+              htmlFor="attachPdf"
+              className="flex items-center gap-2 cursor-pointer flex-1"
+            >
+              <FileText className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <span className="text-sm font-medium">Attach PDF Report</span>
+                <p className="text-xs text-muted-foreground">
+                  Include full analysis as PDF attachment
+                </p>
+              </div>
+            </label>
+          </div>
+
+          {/* Feedback / status banner */}
+          {feedbackMessage && (
+            <div
+              className={cn(
+                "p-3 rounded-lg text-xs leading-relaxed flex items-start gap-2",
+                status === "success"
+                  ? "bg-amber-50 border border-amber-200 text-amber-900"
+                  : "bg-red-50 border border-red-200 text-red-900",
+              )}
+            >
+              <Info className="w-4 h-4 shrink-0 mt-0.5 text-amber-600" />
+              <span>{feedbackMessage}</span>
+            </div>
+          )}
+        </div>
+
+        <DialogFooter className="flex flex-col sm:flex-col gap-2">
+          <Button
+            type="button"
+            onClick={handleSend}
+            disabled={!email || sending}
+            className={cn(
+              "w-full",
+              status === "success" && "bg-green-600 hover:bg-green-700",
+            )}
+          >
+            {sending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending Email...
+              </>
+            ) : status === "success" ? (
+              <>
+                <CheckCircle className="mr-2 h-4 w-4" />
+                Email Processed
+              </>
+            ) : (
+              <>
+                <Mail className="mr-2 h-4 w-4" />
+                Send Automated Email
+              </>
+            )}
+          </Button>
+
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleOpenMailClient}
+            className="w-full gap-2 text-xs"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Open Pre-filled in Your Mail App (Gmail / Outlook)
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 }

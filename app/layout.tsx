@@ -16,7 +16,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Andhakanoon - AI Legal Assistant",
+  title: "SiftPactAI Legal Assistant",
   description: "Understand your contracts with AI-powered legal analysis.",
 };
 
